@@ -463,8 +463,9 @@ window.ui={
 
 def main():
     global WINDOW
+    api = Api()
     WINDOW = webview.create_window("Asystent Spotkań Klastra", html=build_html(),
-                                   width=960, height=800, min_size=(820, 660),
+                                   js_api=api, width=960, height=800, min_size=(820, 660),
                                    background_color="#FFFFFF")
     threading.Thread(target=_prewarm, daemon=True).start()
     webview.start()
