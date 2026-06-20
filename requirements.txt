@@ -1,5 +1,6 @@
-# Python 3.10+  (Windows: w instalatorze Pythona zaznacz "tcl/tk" oraz "Add to PATH")
-# Uwaga: tkinter jest czescia standardowej biblioteki Pythona (nie instaluje sie przez pip)
-tkinterdnd2>=0.4
+# Python 3.10+
+# Interfejs webowy (WebView2) + lokalne nagrywanie z mikrofonu.
+# Na Windows pywebview pociaga za soba pythonnet automatycznie i korzysta z
+# Microsoft Edge WebView2 Runtime (instalator dograje go w razie potrzeby).
+pywebview>=5.0
 sounddevice>=0.4
-pillow>=10.0
