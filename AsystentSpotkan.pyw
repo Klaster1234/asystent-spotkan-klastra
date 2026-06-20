@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Asystent Spotkań Klastra — transkrypcja mowy (Whisper, lokalnie).
+"""Asystent Spotkań Klastra - transkrypcja mowy (Whisper, lokalnie).
 Nagranie z mikrofonu lub plik audio/wideo -> tekst (.txt) + napisy (.srt).
 Lekki, bez zewnętrznych usług. Interfejs webowy (WebView2).
 """
@@ -90,7 +90,7 @@ class Api:
             pass
         data = b"".join(self.frames)
         if len(data) < 16000 * 2:
-            ui("status", "Nagranie za krótkie — spróbuj ponownie.")
+            ui("status", "Nagranie za krótkie - spróbuj ponownie.")
             return
         os.makedirs(RECDIR, exist_ok=True)
         path = os.path.join(RECDIR, time.strftime("nagranie_%Y%m%d_%H%M%S.wav"))
@@ -203,7 +203,7 @@ select{font-family:inherit;font-size:13px;color:var(--text);background:var(--bg)
     <div class="lang">Język <select id="lang">__LANGOPTS__</select></div>
   </div>
 
-  <div class="statusrow" id="status">Gotowe — nagraj głos lub wczytaj plik, a zamienię go w tekst.</div>
+  <div class="statusrow" id="status">Gotowe - nagraj głos lub wczytaj plik, a zamienię go w tekst.</div>
   <div class="prog" id="prog"><i></i></div>
 
   <div class="panel">
@@ -225,7 +225,7 @@ function api(){return window.pywebview && window.pywebview.api;}
 $('rec').onclick=()=>{
   if(!MIC){ui.error('Brak mikrofonu.');return;}
   if(!recOn){ api().start_recording().then(ok=>{ if(ok){recOn=true;recS=0;$('rec').classList.add('on');$('rec').textContent='Zatrzymaj i przepisz';$('pick').disabled=true;
-      recT=setInterval(()=>{recS++;ui.status('Nagrywam… '+String(Math.floor(recS/60)).padStart(2,'0')+':'+String(recS%60).padStart(2,'0')+' — kliknij Zatrzymaj, gdy skończysz.');},1000);} }); }
+      recT=setInterval(()=>{recS++;ui.status('Nagrywam… '+String(Math.floor(recS/60)).padStart(2,'0')+':'+String(recS%60).padStart(2,'0')+' - kliknij Zatrzymaj, gdy skończysz.');},1000);} }); }
   else{ recOn=false;clearInterval(recT);$('rec').classList.remove('on');$('rec').textContent='Nagraj głos'; api().stop_and_process(); }
 };
 $('pick').onclick=()=>api().choose_and_process();
