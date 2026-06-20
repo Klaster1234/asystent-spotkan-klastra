@@ -1,0 +1,22 @@
+# Modele AI (pobierane przez install.ps1; za duze i z wlasnymi licencjami)
+*.gguf
+*.bin
+*.zip
+bin/
+models/
+
+# Nagrania i wyniki uzytkownika
+*.wav
+*.srt
+Transkrypcje/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# System / IDE
+Thumbs.db
+.DS_Store
+.idea/
+.vscode/
