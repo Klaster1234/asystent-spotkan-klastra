@@ -54,15 +54,25 @@ Karta graficzna nie jest wymagana - transkrypcja działa na procesorze.
 
 ## Instalacja (Windows)
 
+### Najprościej: instalator (zalecane)
+
+1. Pobierz **`AsystentSpotkanKlastra-Setup.exe`** ze strony [Releases](https://github.com/Klaster1234/asystent-spotkan-klastra/releases/latest).
+2. Kliknij go dwukrotnie i przejdź przez kreator („Dalej" → „Zainstaluj").
+3. Uruchom „Asystent Spotkań Klastra" z menu Start lub ikony na pulpicie.
+
+Instalator **nie wymaga Pythona** ani żadnej wiedzy technicznej - zawiera wszystko (silnik Whisper i model) i działa offline. Potrzebny jest tylko Microsoft Edge WebView2 Runtime, który w Windows 11 jest już wbudowany (instalator dograje go w razie potrzeby).
+
+### Dla programistów: uruchomienie z kodu źródłowego
+
 1. Zainstaluj [Python 3.10+](https://www.python.org/downloads/) (zaznacz „Add to PATH").
 2. Pobierz to repozytorium (Code → Download ZIP albo `git clone`).
 3. W folderze projektu uruchom w PowerShell:
    ```powershell
    powershell -ExecutionPolicy Bypass -File install.ps1
    ```
-   Instalator dograje WebView2 (jeśli trzeba), pobierze silnik i model Whisper oraz utworzy skrót na pulpicie.
+   Skrypt dograje WebView2 (jeśli trzeba), pobierze silnik i model Whisper oraz utworzy skrót na pulpicie.
 
-Model nie jest dołączony do repozytorium (jest duży i ma własną licencję) - pobiera go instalator.
+Model nie jest dołączony do repozytorium (jest duży i ma własną licencję) - pobiera go instalator. Sposób budowania pliku `Setup.exe` opisuje [installer/README.md](installer/README.md).
 
 ## Użycie
 

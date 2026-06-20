@@ -15,6 +15,14 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Instalator - artefakty budowania (PyInstaller / Inno Setup)
+build/
+build_pyi/
+dist/
+cache/
+installer/Output/
+*.spec.bak
+
 # System / IDE
 Thumbs.db
 .DS_Store

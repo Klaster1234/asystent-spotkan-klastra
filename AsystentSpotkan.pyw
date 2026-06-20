@@ -4,6 +4,7 @@ Nagranie z mikrofonu lub plik audio/wideo -> tekst (.txt) + napisy (.srt).
 Lekki, bez zewnętrznych usług. Interfejs webowy (WebView2).
 """
 import os
+import sys
 import time
 import wave
 import base64
@@ -19,8 +20,35 @@ except Exception:
     MIC = False
 
 USER = os.path.expanduser("~")
-WDIR = os.path.join(USER, "whisper")
-ASSETS = os.path.join(WDIR, "assets")
+
+
+def _app_dir():
+    """Folder where the program lives - next to the .exe when packaged
+    (PyInstaller), next to this script when run from source."""
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+def _resource_dir():
+    """Folder with bundled read-only resources (assets). PyInstaller unpacks
+    them to sys._MEIPASS; from source it is the app folder."""
+    return getattr(sys, "_MEIPASS", _app_dir())
+
+
+def _find_wdir():
+    """Locate the Whisper engine + model.
+    Installer layout: next to the .exe. Legacy install.ps1 layout: ~/whisper."""
+    for cand in (_app_dir(), os.path.join(USER, "whisper")):
+        if os.path.exists(os.path.join(cand, "bin", "Release", "whisper-cli.exe")):
+            return cand
+    return _app_dir()
+
+
+WDIR = _find_wdir()
+ASSETS = os.path.join(_resource_dir(), "assets")
+if not os.path.isdir(ASSETS):
+    ASSETS = os.path.join(WDIR, "assets")  # legacy layout
 CLI = os.path.join(WDIR, "bin", "Release", "whisper-cli.exe")
 MODEL = os.path.join(WDIR, "models", "ggml-large-v3-turbo-q5_0.bin")
 RECDIR = os.path.join(USER, "Documents", "Transkrypcje")
@@ -103,6 +131,9 @@ class Api:
             subprocess.Popen(["explorer", "/select,", os.path.normpath(self.txt_path)])
 
     def _process(self, path):
+        if not os.path.exists(CLI) or not os.path.exists(MODEL):
+            ui("error", "Brak silnika lub modelu Whisper. Zainstaluj aplikację ponownie.")
+            return
         self.busy = True
         self.txt_path = None
         ui("busy", True)
