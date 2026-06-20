@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asystent Spotkań Klastra — transkrypcja mowy, lokalnie i za darmo</title>
+<meta name="description" content="Lekka aplikacja Windows, która zamienia nagrania w tekst. Lokalnie, prywatnie, bez internetu. Klaster Innowacji Społecznych.">
+<style>
+  :root{
+    --bg:#FFFFFF; --cream:#F7F6F3; --line:#ECEAE4; --text:#37352F; --muted:#6E6C69;
+    --accent:#E07B54; --accentd:#C96A45; --dark:#2E2B27;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;color:var(--text);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:var(--accentd);text-decoration:none;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  header{display:flex;align-items:center;gap:12px;padding:20px 0;}
+  header img{width:38px;height:38px;}
+  header .name{font-weight:600;font-size:17px;}
+  header .right{margin-left:auto;display:flex;gap:18px;align-items:center;font-size:14px;}
+  .hero{text-align:center;padding:54px 0 30px;}
+  .hero h1{font-size:48px;font-weight:700;letter-spacing:-.5px;line-height:1.08;}
+  .hero .tag{font-size:20px;color:var(--muted);margin-top:16px;}
+  .hero .desc{max-width:640px;margin:18px auto 0;color:var(--muted);font-size:16px;}
+  .cta{display:flex;gap:14px;justify-content:center;margin-top:30px;flex-wrap:wrap;}
+  .btn{display:inline-block;padding:13px 26px;border-radius:12px;font-weight:600;font-size:16px;}
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accentd);}
+  .btn-ghost{background:#fff;color:var(--text);border:1px solid var(--line);}
+  .btn-ghost:hover{background:var(--cream);}
+  .shot{margin:40px auto 0;max-width:860px;}
+  .shot img{width:100%;border:1px solid var(--line);border-radius:16px;display:block;}
+  .pills{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:26px;}
+  .pill{background:var(--cream);color:var(--muted);border-radius:20px;padding:7px 16px;font-size:13px;font-weight:500;}
+  section{padding:56px 0;}
+  .band{background:var(--cream);}
+  h2{font-size:30px;font-weight:700;text-align:center;letter-spacing:-.3px;}
+  .sub{text-align:center;color:var(--muted);margin-top:10px;font-size:16px;}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;margin-top:36px;}
+  .card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;}
+  .card .ic{width:42px;height:42px;border-radius:11px;background:#FAECE7;color:var(--accentd);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;letter-spacing:.5px;}
+  .card h3{font-size:18px;font-weight:600;margin:14px 0 6px;}
+  .card p{color:var(--muted);font-size:15px;}
+  .reqs{max-width:680px;margin:34px auto 0;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px 24px;}
+  .reqs .row{display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-size:15px;}
+  .reqs .row:last-child{border-bottom:none;}
+  .reqs .row span:first-child{color:var(--muted);}
+  .reqs .row span:last-child{font-weight:500;text-align:right;}
+  .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-top:36px;}
+  .step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;}
+  .step .n{width:32px;height:32px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;}
+  .step h3{font-size:17px;font-weight:600;margin:14px 0 6px;}
+  .step p{color:var(--muted);font-size:15px;}
+  code{background:var(--cream);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-family:Consolas,monospace;font-size:13px;}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--muted);font-size:14px;text-align:center;}
+  footer .klastus{width:54px;height:54px;margin-bottom:10px;}
+  .privacy{display:inline-flex;align-items:center;gap:8px;background:#EAF6EF;color:#15803D;border-radius:20px;padding:7px 16px;font-size:14px;font-weight:500;margin-top:24px;}
+  @media(max-width:640px){.hero h1{font-size:36px;}.hero .tag{font-size:18px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <img src="logo.png" alt="Klaster">
+    <span class="name">Asystent Spotkań</span>
+    <span class="right">
+      <a href="https://github.com/Klaster1234/asystent-spotkan-klastra">GitHub</a>
+      <a class="btn btn-primary" style="padding:8px 18px;font-size:14px;" href="https://github.com/Klaster1234/asystent-spotkan-klastra/releases">Pobierz</a>
+    </span>
+  </header>
+
+  <div class="hero">
+    <h1>Zamień nagrania<br>w tekst</h1>
+    <p class="tag">Lokalnie, prywatnie, za darmo.</p>
+    <p class="desc">Nagraj rozmowę lub wczytaj plik, a Asystent Spotkań zapisze gotowy tekst i napisy. Wszystko dzieje się na Twoim komputerze — bez konta, bez internetu, bez wysyłania danych.</p>
+    <div class="cta">
+      <a class="btn btn-primary" href="https://github.com/Klaster1234/asystent-spotkan-klastra/releases">Pobierz na Windows</a>
+      <a class="btn btn-ghost" href="https://github.com/Klaster1234/asystent-spotkan-klastra">Zobacz na GitHub</a>
+    </div>
+    <div class="pills">
+      <span class="pill">Transkrypcja po polsku</span>
+      <span class="pill">Tekst .txt</span>
+      <span class="pill">Napisy .srt</span>
+      <span class="pill">Bez karty graficznej</span>
+    </div>
+    <div class="shot"><img src="screenshot.png" alt="Aplikacja Asystent Spotkań Klastra"></div>
+  </div>
+</div>
+
+<section class="band">
+  <div class="wrap">
+    <h2>Wszystko, czego potrzebujesz</h2>
+    <p class="sub">Prosto, szybko i bez chmury.</p>
+    <div class="grid">
+      <div class="card"><div class="ic">M</div><h3>Nagrywaj lub wczytaj</h3><p>Nagraj prosto z mikrofonu jednym przyciskiem albo wskaż plik audio/wideo z dysku.</p></div>
+      <div class="card"><div class="ic">PL</div><h3>Transkrypcja po polsku</h3><p>Dokładne rozpoznawanie mowy silnikiem Whisper. Obsługuje też inne języki.</p></div>
+      <div class="card"><div class="ic">TXT</div><h3>Tekst i napisy</h3><p>Gotowy tekst (.txt) oraz napisy z czasem (.srt) zapisują się obok nagrania.</p></div>
+      <div class="card"><div class="ic">OFF</div><h3>100% prywatnie</h3><p>Działa offline na Twoim komputerze. Żadne dane nie wychodzą na zewnątrz.</p></div>
+    </div>
+    <div style="text-align:center;"><span class="privacy">Bez internetu · bez konta · bez wysyłania danych</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Lekkie wymagania</h2>
+    <p class="sub">Działa na zwykłym komputerze — bez karty graficznej.</p>
+    <div class="reqs">
+      <div class="row"><span>System</span><span>Windows 10 / 11 (64-bit)</span></div>
+      <div class="row"><span>Procesor</span><span>4 rdzenie lub więcej</span></div>
+      <div class="row"><span>Pamięć RAM</span><span>8 GB</span></div>
+      <div class="row"><span>Miejsce na dysku</span><span>około 2 GB</span></div>
+      <div class="row"><span>Mikrofon</span><span>tylko do nagrywania (opcjonalnie)</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <h2>Zacznij w 3 krokach</h2>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><h3>Pobierz</h3><p>Ściągnij projekt z GitHuba (Code → Download ZIP) i rozpakuj.</p></div>
+      <div class="step"><div class="n">2</div><h3>Zainstaluj</h3><p>Uruchom <code>install.ps1</code> w PowerShell. Reszta zrobi się sama.</p></div>
+      <div class="step"><div class="n">3</div><h3>Używaj</h3><p>Kliknij ikonę na pulpicie, nagraj lub wczytaj plik — i gotowe.</p></div>
+    </div>
+    <div style="text-align:center;margin-top:34px;">
+      <a class="btn btn-primary" href="https://github.com/Klaster1234/asystent-spotkan-klastra">Pobierz teraz</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <img class="klastus" src="klastus.png" alt="Klastus">
+    <div>Zbudowane dla <strong>Klaster Innowacji Społecznych</strong> — „Inicjatywy społeczne dla wszystkich"</div>
+    <div style="margin-top:8px;">Kod na licencji MIT · Silnik: <a href="https://github.com/ggml-org/whisper.cpp">whisper.cpp</a> · Model: <a href="https://huggingface.co/ggerganov/whisper.cpp">Whisper (Hugging Face)</a></div>
+  </div>
+</footer>
+</body>
+</html>

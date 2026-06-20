@@ -1,4 +1,4 @@
-# Instalator: Asystent Spotkan Klastra (Whisper + Qwen)
+# Instalator: Asystent Spotkan Klastra (transkrypcja Whisper)
 # Uruchom w PowerShell:
 #   powershell -ExecutionPolicy Bypass -File install.ps1
 $ErrorActionPreference = "Stop"
@@ -61,5 +61,4 @@ $sc.Save()
 
 Write-Host ""
 Write-Host "GOTOWE. Ikona 'Asystent Spotkan Klastra' jest na pulpicie." -ForegroundColor Green
-Write-Host "Aby dzialal RAPORT (Qwen): zainstaluj LM Studio (https://lmstudio.ai)," -ForegroundColor Yellow
-Write-Host "pobierz model Qwen3 i wlacz lokalny serwer na porcie 1234." -ForegroundColor Yellow
+Write-Host "Nagraj glos lub wczytaj plik - aplikacja zapisze tekst (.txt) i napisy (.srt)." -ForegroundColor Yellow
