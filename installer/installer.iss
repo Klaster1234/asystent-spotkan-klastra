@@ -2,7 +2,8 @@
 ;
 ; Produces a single Setup.exe that needs NO Python and NO PowerShell.
 ; It bundles: the packaged app (PyInstaller), the whisper.cpp engine, the
-; Whisper model, and the WebView2 bootstrapper. The end user just double-clicks.
+; Whisper model, and the offline WebView2 Runtime installer. The end user just
+; double-clicks - no internet required.
 ;
 ; The build pipeline assembles a staging folder and passes its path + version:
 ;   ISCC.exe installer.iss /DStage="..\build" /DAppVersion="1.0.0"
