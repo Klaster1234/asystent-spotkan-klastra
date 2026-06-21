@@ -61,8 +61,8 @@ Source: "{#Stage}\bin\*"; DestDir: "{app}\bin"; Flags: ignoreversion recursesubd
 Source: "{#Stage}\models\*"; DestDir: "{app}\models"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; Icon used by the shortcuts and Add/Remove Programs.
 Source: "..\assets\klaster.ico"; DestDir: "{app}"; Flags: ignoreversion
-; WebView2 bootstrapper - only copied/run when WebView2 is missing.
-Source: "{#Stage}\webview2\MicrosoftEdgeWebview2Setup.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: NeedWebView2
+; WebView2 Runtime (offline standalone installer) - only copied/run when missing.
+Source: "{#Stage}\webview2\MicrosoftEdgeWebView2RuntimeInstaller.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall; Check: NeedWebView2
 
 [Icons]
 Name: "{group}\{#AppName}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\klaster.ico"
@@ -70,24 +70,55 @@ Name: "{group}\{cm:UninstallProgram,{#AppName}}"; Filename: "{uninstallexe}"
 Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#ExeName}"; IconFilename: "{app}\klaster.ico"; Tasks: desktopicon
 
 [Run]
-; Install Microsoft Edge WebView2 Runtime only if it is not present yet.
-Filename: "{tmp}\MicrosoftEdgeWebview2Setup.exe"; Parameters: "/silent /install"; StatusMsg: "Instaluję Microsoft Edge WebView2 Runtime..."; Check: NeedWebView2; Flags: waituntilterminated
-; Offer to launch the app at the end.
+; Offer to launch the app at the end (WebView2 is installed earlier, in [Code]).
 Filename: "{app}\{#ExeName}"; Description: "{cm:LaunchProgram,{#AppName}}"; Flags: nowait postinstall skipifsilent
 
 [Code]
+{ Read the WebView2 Runtime version ('pv') for the Evergreen runtime GUID. }
+function ReadWV2Version(RootKey: Integer; SubKey: String): String;
+var
+  V: String;
+begin
+  Result := '';
+  if RegQueryStringValue(RootKey, SubKey, 'pv', V) then
+    Result := V;
+end;
+
+{ True only when a real, non-empty runtime version is registered (an orphaned
+  key left after an uninstall has an empty/'0.0.0.0' pv and must not count). }
 function WebView2Installed: Boolean;
 var
-  Guid: String;
+  Guid, V: String;
 begin
   Guid := '{F3017226-FE2A-4295-8BDF-00C3A9A7E4C5}';
-  Result :=
-    RegKeyExists(HKLM, 'SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\' + Guid) or
-    RegKeyExists(HKLM, 'SOFTWARE\Microsoft\EdgeUpdate\Clients\' + Guid) or
-    RegKeyExists(HKCU, 'SOFTWARE\Microsoft\EdgeUpdate\Clients\' + Guid);
+  V := ReadWV2Version(HKLM, 'SOFTWARE\WOW6432Node\Microsoft\EdgeUpdate\Clients\' + Guid);
+  if V = '' then V := ReadWV2Version(HKLM, 'SOFTWARE\Microsoft\EdgeUpdate\Clients\' + Guid);
+  if V = '' then V := ReadWV2Version(HKCU, 'SOFTWARE\Microsoft\EdgeUpdate\Clients\' + Guid);
+  Result := (V <> '') and (V <> '0.0.0.0');
 end;
 
 function NeedWebView2: Boolean;
 begin
   Result := not WebView2Installed;
+end;
+
+{ Install the bundled offline WebView2 Runtime if it is missing, and verify it
+  actually succeeded instead of silently reporting success. }
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ResultCode: Integer;
+  ExePath: String;
+begin
+  if (CurStep = ssPostInstall) and NeedWebView2 then
+  begin
+    ExePath := ExpandConstant('{tmp}\MicrosoftEdgeWebView2RuntimeInstaller.exe');
+    if FileExists(ExePath) then
+    begin
+      Exec(ExePath, '/silent /install', '', SW_SHOW, ewWaitUntilTerminated, ResultCode);
+      if NeedWebView2 then
+        MsgBox('Nie udało się zainstalować składnika Microsoft Edge WebView2 Runtime, '
+          + 'który jest potrzebny do uruchomienia aplikacji. Uruchom instalator ponownie '
+          + 'lub zainstaluj WebView2 ręcznie ze strony Microsoft.', mbError, MB_OK);
+    end;
+  end;
 end;

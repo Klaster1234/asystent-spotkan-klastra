@@ -17,9 +17,11 @@ __pycache__/
 
 # Instalator - artefakty budowania (PyInstaller / Inno Setup)
 build/
-build_pyi/
+build_pyi*/
 dist/
+dist_new/
 cache/
+whisper.zip
 installer/Output/
 *.spec.bak
 

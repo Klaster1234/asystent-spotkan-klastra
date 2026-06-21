@@ -3,9 +3,9 @@
 Ten folder buduje **jeden plik `Setup.exe`** dla Windows. Użytkownik końcowy
 nie potrzebuje Pythona ani PowerShella - klika dwukrotnie i instaluje.
 
-Instalator jest *offline*: zawiera spakowaną aplikację, silnik whisper.cpp oraz
-model Whisper (large-v3-turbo). Jedyny element pobierany w razie potrzeby to
-Microsoft Edge WebView2 Runtime (w Windows 11 jest już wbudowany).
+Instalator jest w pełni *offline*: zawiera spakowaną aplikację, silnik whisper.cpp,
+model Whisper (large-v3-turbo) oraz samodzielny instalator Microsoft Edge WebView2
+Runtime (instalowany tylko, gdy go brakuje). Internet nie jest potrzebny.
 
 ## Z czego się składa
 
@@ -14,7 +14,8 @@ Microsoft Edge WebView2 Runtime (w Windows 11 jest już wbudowany).
 | `AsystentSpotkan.spec` | PyInstaller - pakuje `AsystentSpotkan.pyw` w samodzielny `.exe` (bez Pythona). |
 | `installer.iss` | Inno Setup - tworzy `Setup.exe` (skróty, dezinstalator, WebView2, kreator po polsku). |
 
-Gotowy plik trafia do `installer/Output/AsystentSpotkanKlastra-Setup.exe` (~510 MB).
+Gotowy plik trafia do `installer/Output/AsystentSpotkanKlastra-Setup.exe` (~700 MB:
+model ~547 MB + runtime WebView2 ~190 MB).
 
 ## Budowanie (Windows)
 
@@ -34,7 +35,9 @@ Copy-Item dist\AsystentSpotkan\* build\app\ -Recurse -Force
 curl.exe -fL -o whisper.zip "https://github.com/ggml-org/whisper.cpp/releases/download/v1.9.1/whisper-blas-bin-x64.zip"
 Expand-Archive whisper.zip -DestinationPath build\bin -Force
 curl.exe -fL -o "build\models\ggml-large-v3-turbo-q5_0.bin" "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin"
-curl.exe -fL -o "build\webview2\MicrosoftEdgeWebview2Setup.exe" "https://go.microsoft.com/fwlink/p/?LinkId=2124703"
+# Offline WebView2 Runtime (samodzielny instalator ~190 MB)
+winget download --id Microsoft.EdgeWebView2Runtime --download-directory build\webview2 --accept-source-agreements --accept-package-agreements
+Get-ChildItem build\webview2\*X64*.exe | Rename-Item -NewName MicrosoftEdgeWebView2RuntimeInstaller.exe
 
 # (opcjonalnie) zostaw w build\bin\Release tylko whisper-cli.exe + pliki *.dll,
 # resztę exe można usunąć - aplikacja używa wyłącznie whisper-cli.exe.

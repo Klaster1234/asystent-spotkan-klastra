@@ -138,27 +138,38 @@ class Api:
         self.txt_path = None
         ui("busy", True)
         ui("status", "Przepisuję: " + os.path.basename(path) + " …")
-        base = os.path.splitext(path)[0]
+        # Write results next to the source file when that folder is writable;
+        # otherwise (read-only share, CD, Program Files, …) fall back to the
+        # always-writable Transkrypcje folder so the result is never lost.
+        name = os.path.splitext(os.path.basename(path))[0]
+        out_dir = os.path.dirname(os.path.abspath(path))
+        if not os.access(out_dir, os.W_OK):
+            os.makedirs(RECDIR, exist_ok=True)
+            out_dir = RECDIR
+        base = os.path.join(out_dir, name)
+        txt = base + ".txt"
         try:
-            subprocess.run([CLI, "-m", MODEL, "-l", self.lang, "-t", "16", "-otxt", "-osrt", "-of", base, "-f", path],
-                           capture_output=True, text=True, encoding="utf-8", errors="replace",
-                           creationflags=CREATE_NO_WINDOW)
-            txt = base + ".txt"
-            content = ""
-            if os.path.exists(txt):
-                with open(txt, "r", encoding="utf-8") as fh:
-                    content = fh.read().strip()
+            res = subprocess.run([CLI, "-m", MODEL, "-l", self.lang, "-t", "16", "-otxt", "-osrt", "-of", base, "-f", path],
+                                 capture_output=True, text=True, encoding="utf-8", errors="replace",
+                                 creationflags=CREATE_NO_WINDOW)
         except Exception as e:
             ui("error", "Transkrypcja: " + str(e)); ui("busy", False); self.busy = False
             return
         self.busy = False
         ui("busy", False)
+        if not os.path.exists(txt):
+            # The engine ran but produced no file -> a real error, not "no speech".
+            err = (res.stderr or "").strip().splitlines()
+            ui("error", "Nie udało się przetworzyć pliku" + (": " + err[-1] if err else "."))
+            return
+        with open(txt, "r", encoding="utf-8") as fh:
+            content = fh.read().strip()
         if not content:
             ui("status", "Nie wykryto mowy w pliku.")
             return
         self.txt_path = txt
         ui("transcript", content)
-        ui("status", "Gotowe. Zapisano: " + os.path.basename(txt) + "  (oraz .srt)")
+        ui("status", "Gotowe. Zapisano: " + name + ".txt  (oraz .srt)")
 
 
 def _data_uri(name):

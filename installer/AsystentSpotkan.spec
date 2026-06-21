@@ -15,7 +15,10 @@ binaries = []
 hiddenimports = ["clr", "_cffi_backend"]
 
 # Pull data files + native DLLs for the WebView2 backend and the mic recorder.
-for pkg in ("webview", "sounddevice", "clr_loader", "pythonnet"):
+# "_sounddevice_data" carries the PortAudio DLL the recorder loads at import time;
+# collecting it explicitly means the build does not silently depend on the
+# pyinstaller-hooks-contrib sounddevice hook being present.
+for pkg in ("webview", "sounddevice", "_sounddevice_data", "clr_loader", "pythonnet"):
     try:
         d, b, h = collect_all(pkg)
         datas += d

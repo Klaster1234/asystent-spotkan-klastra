@@ -60,7 +60,7 @@ Karta graficzna nie jest wymagana - transkrypcja działa na procesorze.
 2. Kliknij go dwukrotnie i przejdź przez kreator („Dalej" → „Zainstaluj").
 3. Uruchom „Asystent Spotkań Klastra" z menu Start lub ikony na pulpicie.
 
-Instalator **nie wymaga Pythona** ani żadnej wiedzy technicznej - zawiera wszystko (silnik Whisper i model) i działa offline. Potrzebny jest tylko Microsoft Edge WebView2 Runtime, który w Windows 11 jest już wbudowany (instalator dograje go w razie potrzeby).
+Instalator **nie wymaga Pythona** ani żadnej wiedzy technicznej i działa w pełni offline - zawiera wszystko: silnik Whisper, model oraz składnik Microsoft Edge WebView2 Runtime (instaluje go, jeśli go brakuje; w Windows 11 zwykle jest już wbudowany). Internet nie jest potrzebny ani do instalacji, ani do działania.
 
 ### Dla programistów: uruchomienie z kodu źródłowego
 
@@ -81,7 +81,7 @@ Kliknij ikonę „Asystent Spotkań Klastra" na pulpicie, a potem:
 - „Nagraj głos" → mów → „Zatrzymaj i przepisz", albo
 - „Wybierz plik…" i wskaż nagranie.
 
-Tekst pojawi się w oknie i zapisze obok nagrania (.txt oraz .srt).
+Tekst pojawi się w oknie i zapisze się obok pliku (.txt oraz .srt). Jeśli folder źródłowy jest tylko do odczytu, wynik trafi do folderu Dokumenty\Transkrypcje.
 
 ## Model i licencje
 
