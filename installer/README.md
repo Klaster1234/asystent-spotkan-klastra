@@ -42,9 +42,42 @@ Get-ChildItem build\webview2\*X64*.exe | Rename-Item -NewName MicrosoftEdgeWebVi
 # (opcjonalnie) zostaw w build\bin\Release tylko whisper-cli.exe + pliki *.dll,
 # resztę exe można usunąć - aplikacja używa wyłącznie whisper-cli.exe.
 
-# 4. Zbuduj Setup.exe (-> installer\Output\)
+# 4. (opcjonalnie) podpisz aplikację przed spakowaniem - patrz "Podpisywanie" niżej
+# 5. Zbuduj Setup.exe (-> installer\Output\)
 & "$env:LOCALAPPDATA\Programs\Inno Setup 6\ISCC.exe" installer/installer.iss "/DStage=$($PWD)\build" /DAppVersion=1.0.0
 ```
+
+## Podpisywanie cyfrowe (usuwa ostrzeżenie SmartScreen)
+
+Niepodpisany `Setup.exe` powoduje, że przy pierwszym uruchomieniu Windows
+pokazuje ekran „Windows ochronił Twój komputer" (SmartScreen). Aby go usunąć,
+plik trzeba podpisać **zaufanym** certyfikatem do podpisywania kodu.
+
+Skrypt [`sign.ps1`](sign.ps1) podpisuje pliki (SHA-256 + znacznik czasu) i sam
+znajduje `signtool.exe`. Podpisz **dwa** pliki: aplikację przed spakowaniem oraz
+gotowy instalator:
+
+```powershell
+# przed krokiem 5 (ISCC):
+installer\sign.ps1 -Path dist\AsystentSpotkan\AsystentSpotkan.exe -Pfx cert.pfx -Password ******
+# po kroku 5:
+installer\sign.ps1 -Path installer\Output\AsystentSpotkanKlastra-Setup.exe -Pfx cert.pfx -Password ******
+```
+
+Bez certyfikatu skrypt nic nie psuje - po prostu pomija podpisywanie.
+
+### Skąd wziąć certyfikat (to jedyny element, którego nie da się zautomatyzować)
+
+| Opcja | Koszt | Czy SmartScreen od razu ufa? |
+|---|---|---|
+| **Azure Trusted Signing** (zalecane) | ~kilka USD/mies. | Tak (certyfikat Microsoftu, reputacja od startu). |
+| **SignPath Foundation** | darmowe dla open source | Tak, po zatwierdzeniu projektu. |
+| Tradycyjny certyfikat OV/EV od CA (np. DigiCert, Sectigo) | ~kilkaset USD/rok | OV buduje reputację z czasem, EV od razu. |
+| Certyfikat self-signed | 0 | Nie (dla publicznych pobrań). Działa tylko, gdy rozprowadzisz go jako zaufany na komputerach w organizacji, np. przez GPO. |
+
+Po uzyskaniu certyfikatu (plik `.pfx` albo wpis w magazynie Windows) podpisywanie
+to jedno polecenie powyżej; w CI wystarczy dodać sekrety `SIGN_PFX` /
+`SIGN_PFX_PASSWORD`.
 
 ## Publikacja
 
