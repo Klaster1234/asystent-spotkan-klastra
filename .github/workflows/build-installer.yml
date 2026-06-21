@@ -28,6 +28,7 @@ jobs:
     runs-on: windows-latest
     env:
       HAS_SIGN: ${{ secrets.SIGN_PFX_BASE64 != '' }}
+      HAS_SIGNPATH: ${{ vars.SIGNPATH_ORG_ID != '' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -112,12 +113,44 @@ jobs:
           & $iscc installer/installer.iss "/DStage=$($PWD)\build" "/DAppVersion=${{ steps.ver.outputs.version }}"
           if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE" }
 
-      - name: Sign installer
+      - name: Sign installer (local PFX/signtool)
         if: env.HAS_SIGN == 'true'
         shell: pwsh
         env:
           SIGN_PFX_PASSWORD: ${{ secrets.SIGN_PFX_PASSWORD }}
         run: installer/sign.ps1 -Path installer/Output/AsystentSpotkanKlastra-Setup.exe -Pfx "$env:RUNNER_TEMP\cert.pfx" -Password $env:SIGN_PFX_PASSWORD
+
+      # --- SignPath cloud signing (free for OSS). Active once these repo
+      # variables are set: SIGNPATH_ORG_ID, SIGNPATH_PROJECT_SLUG,
+      # SIGNPATH_POLICY_SLUG, SIGNPATH_ARTIFACT_SLUG + secret SIGNPATH_API_TOKEN.
+      - name: Upload unsigned installer (for SignPath)
+        id: unsigned
+        if: env.HAS_SIGNPATH == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: unsigned-installer
+          path: installer/Output/AsystentSpotkanKlastra-Setup.exe
+
+      - name: Sign installer via SignPath
+        if: env.HAS_SIGNPATH == 'true'
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORG_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          artifact-configuration-slug: ${{ vars.SIGNPATH_ARTIFACT_SLUG }}
+          github-artifact-id: ${{ steps.unsigned.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: signed
+
+      - name: Replace installer with SignPath-signed copy
+        if: env.HAS_SIGNPATH == 'true'
+        shell: pwsh
+        run: |
+          $signed = Get-ChildItem signed -Recurse -Filter *.exe | Select-Object -First 1
+          if (-not $signed) { throw 'SignPath nie zwrocil podpisanego pliku' }
+          Copy-Item $signed.FullName installer/Output/AsystentSpotkanKlastra-Setup.exe -Force
 
       - name: Upload installer as workflow artifact
         uses: actions/upload-artifact@v4

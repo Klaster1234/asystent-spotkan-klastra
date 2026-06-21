@@ -79,6 +79,34 @@ Po uzyskaniu certyfikatu (plik `.pfx` albo wpis w magazynie Windows) podpisywani
 to jedno polecenie powyżej; w CI wystarczy dodać sekrety `SIGN_PFX` /
 `SIGN_PFX_PASSWORD`.
 
+### Wariant zalecany dla tego projektu: SignPath Foundation (darmowy, OSS)
+
+SignPath nie wydaje pliku `.pfx` - klucz trzyma w swoim HSM, a podpisywanie
+odbywa się w chmurze: CI wysyła zbudowany `Setup.exe`, SignPath go podpisuje i
+oddaje. Workflow [`build-installer.yml`](../.github/workflows/build-installer.yml)
+ma to już wbudowane (krok „Sign installer via SignPath"); włącza się, gdy ustawisz
+poniższe wartości w repo.
+
+Krok po kroku:
+
+1. **Złóż wniosek**: https://signpath.org/apply (projekt: nazwa, repo
+   `Klaster1234/asystent-spotkan-klastra`, licencja MIT). Akceptacja: dni.
+2. Po akceptacji w panelu SignPath odczytaj/utwórz:
+   - *Organization Id* (GUID),
+   - *Project* (slug, np. `asystent-spotkan-klastra`),
+   - *Signing Policy* (slug, np. `release-signing`),
+   - *Artifact Configuration* - skonfiguruj tak, by podpisywała plik `.exe`
+     wewnątrz ZIP-a (artefakt z `upload-artifact` to ZIP),
+   - *CI User* + **API token**.
+3. W repo (Settings → Secrets and variables → Actions):
+   - **Variables**: `SIGNPATH_ORG_ID`, `SIGNPATH_PROJECT_SLUG`,
+     `SIGNPATH_POLICY_SLUG`, `SIGNPATH_ARTIFACT_SLUG`,
+   - **Secret**: `SIGNPATH_API_TOKEN`.
+4. Wypchnij nowy tag (`git tag v1.1 && git push --tags`) - CI zbuduje, wyśle do
+   SignPath, a na Releases trafi już **podpisany** `Setup.exe`.
+
+Dokumentacja integracji: https://docs.signpath.io/trusted-build-systems/github
+
 ## Publikacja
 
 Wgraj gotowy plik na stronę [Releases](https://github.com/Klaster1234/asystent-spotkan-klastra/releases):
